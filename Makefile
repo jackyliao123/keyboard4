@@ -5,12 +5,10 @@ F_CPU        = 16000000
 F_USB        = $(F_CPU)
 OPTIMIZATION = s
 TARGET       = keyboard
-SRC          = keyboard.c usb.c tlc5940.c Descriptors.c $(LUFA_SRC_USB) $(LUFA_SRC_USBCLASS)
+SRC          = keyboard.c usb.c tlc5940.c util.c Descriptors.c $(LUFA_SRC_USB) $(LUFA_SRC_USBCLASS)
 LUFA_PATH    = LUFA
 CC_FLAGS     = -DUSE_LUFA_CONFIG_HEADER -IConfig/
 LD_FLAGS     =
-
-PORT         = /dev/ttyACM0
 
 all:
 
@@ -30,6 +28,6 @@ include $(DMBS_PATH)/avrdude.mk
 include $(DMBS_PATH)/atprogram.mk
 
 upload: $(TARGET).hex
-	stty -F $(PORT) speed 1200 cs8 -cstopb -parenb raw
+	stty -F $(port) speed 1200 cs8 -cstopb -parenb raw
 	sleep 2
-	avrdude -v -v -D -c avr109 -p atmega32u4 -P $(PORT) -b 115200 -U flash:w:$(TARGET).hex:i
+	avrdude -v -v -D -c avr109 -p atmega32u4 -P $(port) -b 115200 -U flash:w:$(TARGET).hex:i

@@ -2,7 +2,8 @@
 #include "usb.h"
 #include <avr/io.h>
 
-uint8_t led_buf[24];
+static uint8_t led_buf[24];
+static bool xlat_running = false;
 
 ISR(TIMER1_OVF_vect) {
 	// XLAT processed, disable XLAT
@@ -11,12 +12,14 @@ ISR(TIMER1_OVF_vect) {
 
 void tlc5940_update(void) {
 
-	// Pulse clock
-	PORTB |= _BV(1);
-	PORTB &= ~_BV(1);
+	// Pulse SCLK
+	//PORTB |= _BV(1);
+	//PORTB &= ~_BV(1);
 
-	// Disable XLAT 
-	TCCR1A = _BV(COM1B1);
+	if(xlat_running) {
+		// Disable XLAT 
+		TCCR1A = _BV(COM1B1);
+	}
 
 	// Send data
 	for(uint8_t i = 0; i < 24; ++i) {
@@ -24,8 +27,10 @@ void tlc5940_update(void) {
 		while(!(SPSR & _BV(SPIF)));
 	}
 
-	// Queue XLAT 
-	TCCR1A = _BV(COM1A1) | _BV(COM1B1);
+	if(xlat_running) {
+		// Queue XLAT 
+		TCCR1A = _BV(COM1A1) | _BV(COM1B1);
+	}
 }
 
 void tlc5940_set_rgb(uint8_t led, uint16_t r, uint16_t g, uint16_t b) {
@@ -50,7 +55,7 @@ void tlc5940_set(uint8_t led, uint16_t val) {
 
 void tlc5940_init(void) {
 
-	// SS SCK MOSI XLAT BLANK
+	// SS SCLK MOSI XLAT BLANK
 	DDRB |= _BV(0) | _BV(1) | _BV(2) | _BV(5) | _BV(6);
 
 	// Hold BLANK high
@@ -70,16 +75,16 @@ void tlc5940_init(void) {
 	PORTB &= ~_BV(5);
 
 	// Init Timer1 for BLANK and XLAT
-    OCR1A = 1;
-    OCR1B = 2;
-    ICR1 = 8192; // 2732
-    TCCR1B = _BV(CS10) | _BV(WGM13);
+	OCR1A = 1;
+	OCR1B = 2;
+	ICR1 = 8192; // 2732
+	TCCR1B = _BV(CS10) | _BV(WGM13);
 
+	// Init Timer3 for GSCLK
 	TCCR3A = _BV(COM3A0);
 	TCCR3B = _BV(WGM32) | _BV(CS30);
 	OCR3A = 1;
 
-//	TODO problems with Timer4
 //	// Init Timer4 for GSCLK
 //	PLLFRQ = (1 << PLLUSB) | (1 << PDIV3) | (1 << PDIV1) | (1 << PLLTM0);
 //	TCCR4A = _BV(COM4A0) | _BV(PWM4A);
@@ -88,5 +93,9 @@ void tlc5940_init(void) {
 //	TCCR4B = _BV(CS40);
 
 	// Start BLANK pulses
-    TCCR1A = _BV(COM1B1);
+	TCCR1A = _BV(COM1B1);
+
+	xlat_running = true;
+
+	tlc5940_update();
 }

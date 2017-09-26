@@ -1,6 +1,8 @@
 #ifndef config_h
 #define config_h
 
+#define DEBOUNCE_TIMEOUT 10000
+
 #define MOUSE_MIN_AXIS -32768
 #define MOUSE_MAX_AXIS 32767
 #define MOUSE_MIN_PHYS -32768

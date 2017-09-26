@@ -272,17 +272,17 @@ void usb_run(void) {
 		}
 	}
 
-	Endpoint_SelectEndpoint(KEYBOARD_IN_EPADDR);
+	Endpoint_SelectEndpoint(KEYBOARD_OUT_EPADDR);
 	
 	if(Endpoint_IsOUTReceived() && Endpoint_IsReadWriteAllowed()) {
 		usb_keyboard_update_led(Endpoint_Read_8());
-		Endpoint_SelectEndpoint(KEYBOARD_IN_EPADDR);
+		Endpoint_SelectEndpoint(KEYBOARD_OUT_EPADDR);
 		Endpoint_ClearOUT();
 	}
 
-	if(!idle_cnt && idle_max) {
-		idle_cnt = idle_max;
-		usb_keyboard_send_report();
-	}
+//	if(!idle_cnt && idle_max) {
+//		idle_cnt = idle_max;
+//		usb_keyboard_send_report();
+//	}
 }
 
