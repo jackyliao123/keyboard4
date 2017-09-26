@@ -37,7 +37,7 @@ This header file contains function that can be used to interface with the TLC594
 
 `void tlc5940_set_rgb(uint8_t led, uint16_t r, uint16_t g, uint16_t b)`
 
-> Sets the RGB values of the `led` (0 - 3), to `r`, `g`, `b` values (0 - 4095). This does not immediately updat the colours of the LEDs.
+> Sets the RGB values of the `led` (0 - 3), to `r`, `g`, `b` values (0 - 4095). This does not immediately update the colours of the LEDs.
 
 `void tlc5940_update(void)`
 
