@@ -2,7 +2,7 @@
 
 The 4 button keyboard is a 3D printed RGB mechanical keyboard, with a custom PCB. It can house 4 Cherry MX compatible RGB key switches.
 
-More about it here (Insert link here).
+More about it (including design files) [here](https://jackyliao.me/projects/keyboard4).
 
 This repository contains the API for writing a firmware for the 4 button keyboard, which runs on the ATmega32u4. It uses the TLC5940 chip to drive the 4 RGB LEDs. A few examples are provided.
 
